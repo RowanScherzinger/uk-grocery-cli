@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { GroceryProvider, Product, Basket, DeliverySlot, Order, SearchOptions, BasketItem } from './types';
-import { login } from '../auth/login';
+import { login, LoginOptions } from '../auth/login';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -66,8 +66,8 @@ export class SainsburysProvider implements GroceryProvider {
     fs.writeFileSync(SESSION_FILE, JSON.stringify({ cookies, savedAt: new Date().toISOString() }), { mode: 0o600 });
   }
 
-  async login(email: string, password: string): Promise<void> {
-    const sessionData = await login(email, password);
+  async login(email: string, password: string, options?: LoginOptions): Promise<void> {
+    const sessionData = await login(email, password, options);
     // Convert cookie objects to cookie header string
     const cookieString = sessionData.cookies.map((c: any) => `${c.name}=${c.value}`).join('; ');
     

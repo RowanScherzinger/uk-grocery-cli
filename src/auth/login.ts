@@ -13,7 +13,30 @@ export interface SessionData {
   lastLogin: string;
 }
 
-export async function login(email: string, password: string): Promise<SessionData> {
+export interface LoginOptions {
+  /**
+   * Called when Sainsbury's asks for the SMS MFA code. Defaults to a
+   * terminal prompt, but callers (e.g. a web UI) can supply the code
+   * from elsewhere.
+   */
+  getMfaCode?: () => Promise<string>;
+}
+
+function promptMfaCodeFromTerminal(): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise<string>((resolve) => {
+    rl.question('Enter 6-digit MFA code: ', (answer: string) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+export async function login(email: string, password: string, options: LoginOptions = {}): Promise<SessionData> {
   console.log('🔐 Logging in to Sainsbury\'s...');
   
   const browser = await chromium.launch({ headless: false });
@@ -88,20 +111,10 @@ export async function login(email: string, password: string): Promise<SessionDat
     if (currentUrl.includes('/mfa')) {
       console.log('🔐 MFA required - SMS code sent');
       console.log('📱 Check your phone for the 6-digit code');
-      
-      // Prompt for MFA code
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-      });
-      
-      const mfaCode = await new Promise<string>((resolve) => {
-        rl.question('Enter 6-digit MFA code: ', (answer: string) => {
-          rl.close();
-          resolve(answer.trim());
-        });
-      });
-      
+
+      const getMfaCode = options.getMfaCode ?? promptMfaCodeFromTerminal;
+      const mfaCode = (await getMfaCode()).trim();
+
       if (!mfaCode || mfaCode.length !== 6) {
         throw new Error('Invalid MFA code - must be 6 digits');
       }
