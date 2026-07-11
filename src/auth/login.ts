@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as readline from 'readline';
+import { resolveChromiumLaunchOptions } from '../browser/launch';
 
 const CONFIG_DIR = path.join(os.homedir(), '.sainsburys');
 const SESSION_FILE = path.join(CONFIG_DIR, 'session.json');
@@ -39,7 +40,7 @@ function promptMfaCodeFromTerminal(): Promise<string> {
 export async function login(email: string, password: string, options: LoginOptions = {}): Promise<SessionData> {
   console.log('🔐 Logging in to Sainsbury\'s...');
   
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch(resolveChromiumLaunchOptions({ headless: true }));
   const context = await browser.newContext({
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
   });

@@ -1,6 +1,7 @@
 import { chromium, Page } from 'playwright';
 import * as fs from 'fs';
 import * as os from 'os';
+import { resolveChromiumLaunchOptions } from './launch';
 
 export interface Slot {
   slot_id: string;
@@ -23,10 +24,10 @@ async function loadSession(page: Page): Promise<void> {
 }
 
 export async function getSlots(headless: boolean = true): Promise<Slot[]> {
-  const browser = await chromium.launch({ 
+  const browser = await chromium.launch(resolveChromiumLaunchOptions({
     headless,
     args: ['--disable-blink-features=AutomationControlled']
-  });
+  }));
   
   const page = await browser.newPage({
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -111,10 +112,10 @@ export async function getSlots(headless: boolean = true): Promise<Slot[]> {
 }
 
 export async function bookSlot(slotId: string, headless: boolean = false): Promise<void> {
-  const browser = await chromium.launch({ 
+  const browser = await chromium.launch(resolveChromiumLaunchOptions({
     headless, // Show browser for booking to see what happens
     args: ['--disable-blink-features=AutomationControlled']
-  });
+  }));
   
   const page = await browser.newPage({
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

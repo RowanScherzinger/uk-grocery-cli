@@ -1,6 +1,7 @@
 import { chromium, Page } from 'playwright';
 import * as fs from 'fs';
 import * as os from 'os';
+import { resolveChromiumLaunchOptions } from './launch';
 
 export interface CheckoutResult {
   order_id: string;
@@ -32,10 +33,10 @@ async function loadSession(page: Page): Promise<void> {
  * User must complete payment manually in browser or via separate flow
  */
 export async function checkout(dryRun: boolean = true): Promise<CheckoutResult> {
-  const browser = await chromium.launch({ 
-    headless: false, // Always show browser for checkout - transparency
+  const browser = await chromium.launch(resolveChromiumLaunchOptions({
+    headless: false, // Default headed for checkout transparency; override via SAINSBURYS_HEADLESS
     args: ['--disable-blink-features=AutomationControlled']
-  });
+  }));
   
   const page = await browser.newPage({
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
