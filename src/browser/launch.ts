@@ -7,7 +7,8 @@ import type { LaunchOptions } from 'playwright';
  *
  * Environment overrides:
  *  - SAINSBURYS_HEADLESS: 'false'/'0' forces headed, 'true'/'1' forces headless.
- *    When unset, the caller's `base.headless` is used (defaulting to true).
+ *    When unset, the caller's `base.headless` is used (defaulting to false —
+ *    Sainsbury's Akamai check refuses headless Chromium at the login page).
  *  - GROC_BROWSER_PATH: absolute path to a Chromium executable
  *    (e.g. /usr/bin/chromium). Preferred on ARM/Raspberry Pi, where Playwright's
  *    bundled Chromium isn't available.
@@ -26,7 +27,7 @@ export function resolveChromiumLaunchOptions(base: LaunchOptions = {}): LaunchOp
   } else if (headlessEnv === 'true' || headlessEnv === '1') {
     options.headless = true;
   } else if (options.headless === undefined) {
-    options.headless = true;
+    options.headless = false;
   }
 
   const executablePath = (process.env.GROC_BROWSER_PATH || '').trim();

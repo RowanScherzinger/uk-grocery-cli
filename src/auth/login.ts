@@ -40,7 +40,7 @@ function promptMfaCodeFromTerminal(): Promise<string> {
 export async function login(email: string, password: string, options: LoginOptions = {}): Promise<SessionData> {
   console.log('🔐 Logging in to Sainsbury\'s...');
   
-  const browser = await chromium.launch(resolveChromiumLaunchOptions({ headless: true }));
+  const browser = await chromium.launch(resolveChromiumLaunchOptions({ headless: false }));
   const context = await browser.newContext({
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
   });

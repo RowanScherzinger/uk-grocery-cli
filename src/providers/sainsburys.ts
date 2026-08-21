@@ -268,9 +268,9 @@ export class SainsburysProvider implements GroceryProvider {
   }
 
   async getDeliverySlots(): Promise<DeliverySlot[]> {
-    // Use browser automation (headless) to get slots
+    // Use browser automation to get slots (headed by default — see resolveChromiumLaunchOptions)
     const { getSlots } = await import('../browser/slots');
-    const slots = await getSlots(true); // headless mode
+    const slots = await getSlots();
     
     return slots.map(s => ({
       slot_id: s.slot_id,

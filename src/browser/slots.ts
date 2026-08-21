@@ -23,7 +23,7 @@ async function loadSession(page: Page): Promise<void> {
   await page.context().addCookies(session.cookies);
 }
 
-export async function getSlots(headless: boolean = true): Promise<Slot[]> {
+export async function getSlots(headless: boolean = false): Promise<Slot[]> {
   const browser = await chromium.launch(resolveChromiumLaunchOptions({
     headless,
     args: ['--disable-blink-features=AutomationControlled']
